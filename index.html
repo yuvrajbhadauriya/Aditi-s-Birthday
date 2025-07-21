@@ -16,9 +16,98 @@
         rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <style>
+        /* Reset body styles for overlay */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrolling when overlay is active */
+        }
+
+        /* Heart Button Overlay Styles */
+        #introOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        /* Heart Button Styling */
+        #startButton {
+            font-size: 80px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ff4757;
+            animation: pulse 1.5s ease-in-out infinite;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+
+        #startButton:hover {
+            transform: scale(1.1);
+        }
+
+        #startButton:active {
+            transform: scale(0.95);
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Hidden state for main website */
+        #wrapper {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #wrapper.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Overlay fade out animation */
+        #introOverlay.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Restore body overflow when site is shown */
+        body.site-active {
+            overflow: visible;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Heart Button Overlay -->
+    <div id="introOverlay">
+        <button id="startButton" aria-label="Click to start and play music">❤️</button>
+    </div>
+
+    <!-- Background Music Audio Element -->
+    <audio id="bgm" loop preload="metadata">
+        <source src="bgmusic.mp3" type="audio/mpeg">
+        <source src="bgmusic.ogg" type="audio/ogg">
+        <p>Your browser does not support the audio element.</p>
+    </audio>
+
+    <!-- Your Main Website Content -->
     <div id="wrapper">
         <div class="flag__birthday">
             <img src="1.png" alt="" width="350" class="flag__left">
@@ -58,7 +147,6 @@
                             <i class="fa-regular fa-envelope"></i>
                         </div>
                     </button>
-
                 </div>
             </div>
             <div class="right">
@@ -121,7 +209,6 @@
             <img src="smiley_icon.png" alt="" width="100">
         </div>
 
-
         <div class="boxMail">
             <i class="fa-solid fa-xmark"></i>
             <div class="boxMail-container">
@@ -130,7 +217,6 @@
                         <img src="unnamed.png" alt="">
                     </div>
                     <h4 class="username">To: Adiii 💖<span class="underline"></span></h4>
-
                     <h3>Happy Birthday</h3>
                     <div class="imageCute">
                         <img src="cute1.png" alt="">
@@ -145,7 +231,6 @@
                             baki chill kr mazre kr its your day, but for me my everyday is special bcoz i have you with me.
                             so Happy Birthday Aditi ❤️
                         </h2>
-
                         <div class="imageCute2">
                             <img src="cute2.png" alt="">
                         </div>
@@ -156,7 +241,49 @@
     </div>
 
 </body>
+
 <script>
+    // Heart Button Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const startButton = document.getElementById('startButton');
+        const introOverlay = document.getElementById('introOverlay');
+        const wrapper = document.getElementById('wrapper');
+        const bgMusic = document.getElementById('bgm');
+
+        startButton.addEventListener('click', function() {
+            // Play background music
+            bgMusic.play().then(() => {
+                console.log('Background music started');
+            }).catch((error) => {
+                console.warn('Could not play audio:', error);
+            });
+
+            // Hide the overlay with animation
+            introOverlay.classList.add('hide');
+
+            // Show the main website content after overlay fades
+            setTimeout(() => {
+                wrapper.classList.add('show');
+                document.body.classList.add('site-active');
+            }, 500);
+
+            // Completely remove overlay from DOM after transition
+            setTimeout(() => {
+                introOverlay.style.display = 'none';
+            }, 1000);
+        });
+
+        // Handle audio loading errors
+        bgMusic.addEventListener('error', function() {
+            console.warn('Could not load background music file');
+        });
+
+        bgMusic.addEventListener('canplaythrough', function() {
+            console.log('Background music loaded successfully');
+        });
+    });
+
+    // Your existing JavaScript code
     let datetxt = "22 July";
     let datatxtletter = "My love. You are a very special girl. I always silently thank you for coming into my life. Today, I wish you all the best, lots of health, and lots of joy. I always hope we will celebrate many more birthdays even better than this together. Happy birthday to you.💕";
     let titleLetter = "To you";
@@ -167,7 +294,7 @@
     let currentIndexLetter = 0;
     let currentIndexTitle = 0;
     let date__of__birth = document.querySelector(".date__of__birth span");
-    let text__letter = document.querySelector(".text__letter p");
+    
     setTimeout(function () {
         timeDatetxt = setInterval(function () {
             if (currentIndex < charArrDate.length) {
@@ -186,76 +313,34 @@
 
     var intervalContent;
     var intervalTitle;
-    $("#btn__letter").on("click", function () {
-        $(".box__letter").slideDown()
-        setTimeout(function () {
-            $(".letter__border").slideDown();
-        }, 1000)
-        setTimeout(function () {
-            intervalTitle = setInterval(function () {
-                if (currentIndexTitle < charArrTitle.length) {
-                    document.querySelector(".title__letter").textContent += charArrTitle[currentIndexTitle];
-                    let i = document.createElement("i");
-                    i.className = "fa-solid fa-heart"
-                    document.querySelector(".title__letter").appendChild(i)
-                    currentIndexTitle++;
-                }
-                else {
-                    clearInterval(intervalTitle)
-                }
-            }, 100)
-        }, 2000)
-        setTimeout(function () {
-            document.querySelector("#heart__letter").classList.add("animationOp");
-            document.querySelector(".love__img").classList.add("animationOp");
-            document.querySelector("#mewmew").classList.add("animationOp");
-        }, 2800)
-        setTimeout(function () {
-            document.querySelectorAll(".heart").forEach((item) => {
-                item.classList.add("animation")
+    
+    // Wait for DOM to be ready before setting up jQuery events
+    $(document).ready(function() {
+        $("#btn__letter").on("click", function () {
+            $(".boxMail").addClass('active');
+        });
+
+        $(".fa-xmark").on("click", function () {
+            $(".boxMail").removeClass('active');
+        });
+
+        let mailBox = document.querySelector('.mail')
+        let boxmail = document.querySelector('.boxMail')
+        var close = document.querySelector('.fa-xmark')
+        
+        if (mailBox) {
+            mailBox.onclick = function () {
+                mailBox.classList.toggle('active')
+                boxmail.classList.add('active')
+            }
+        }
+
+        if (close) {
+            close.addEventListener('click', function () {
+                boxmail.classList.remove('active')
             })
-        }, 3500)
-        setTimeout(function () {
-            intervalContent = setInterval(function () {
-                if (currentIndexLetter < charArrDateLetter.length) {
-                    text__letter.textContent += charArrDateLetter[currentIndexLetter];
-                    currentIndexLetter++;
-                }
-                else {
-                    clearInterval(intervalContent)
-                }
-            }, 50)
-        }, 6000)
-    })
-    $(".close").on("click", function () {
-        clearInterval(intervalContent)
-        document.querySelector(".title__letter").textContent = "";
-        text__letter.textContent = "";
-        currentIndexLetter = 0
-        currentIndexTitle = 0
-        document.querySelector("#heart__letter").classList.remove("animationOp");
-        document.querySelector(".love__img").classList.remove("animationOp");
-        document.querySelector("#mewmew").classList.remove("animationOp");
-        document.querySelectorAll(".heart").forEach((item) => {
-            item.classList.remove("animation")
-        })
-        $(".box__letter").slideUp();
-        $(".letter__border").slideUp();
-    })
-
-
-
-    let mailBox = document.querySelector('.mail')
-    let boxmail = document.querySelector('.boxMail')
-    var close = document.querySelector('.fa-xmark')
-    mailBox.onclick = function () {
-        mailBox.classList.toggle('active')
-        boxmail.classList.add('active')
-    }
-
-    close.addEventListener('click', function () {
-        boxmail.classList.remove('active')
-    })
+        }
+    });
 </script>
 
 </html>
